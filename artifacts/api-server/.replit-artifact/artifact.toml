@@ -1,8 +1,9 @@
 kind = "api"
-previewPath = "/api" # TODO - should be excluded from preview in the first place
+previewPath = "/api"
 title = "API Server"
 version = "1.0.0"
 id = "3B4_FFSkEVBkAeYMFRJ2e"
+deploymentTarget = "vm"
 
 [[services]]
 localPort = 8080
@@ -28,5 +29,3 @@ args = ["node", "--enable-source-maps", "artifacts/api-server/dist/index.mjs"]
 PORT = "8080"
 NODE_ENV = "production"
 
-[services.production.health.startup]
-path = "/api/healthz"
