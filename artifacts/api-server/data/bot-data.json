@@ -2,22 +2,23 @@
   "guilds": {
     "1451263550948376608": {
       "tickets": {
-        "1500316374667366591": {
+        "1500317260940579007": {
           "userId": "1456788629912293608",
-          "type": "administrator",
-          "typeName": "Administrator Ticket",
-          "number": 4,
+          "type": "division",
+          "typeName": "Division Ticket",
+          "number": 5,
           "claimed": false,
           "claimedBy": null,
           "closed": false,
           "reason": "slam 3likom",
-          "createdAt": "2026-05-03T02:01:38.734Z"
+          "createdAt": "2026-05-03T02:05:09.877Z"
         }
       },
       "ticketConfig": {
         "setupChannelId": "1452754994032934953",
         "categoryId": "1500310821581099110",
-        "ticketCounter": 4
+        "roles": {},
+        "ticketCounter": 5
       },
       "logConfig": {
         "channelId": "1500314747734589450"

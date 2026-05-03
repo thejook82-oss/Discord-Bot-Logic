@@ -99,9 +99,8 @@ export async function sendTicketPanel(
   config.ticketConfig = {
     setupChannelId: panelChannelId,
     categoryId,
+    roles: config.ticketConfig?.roles ?? {},
     ticketCounter: config.ticketConfig?.ticketCounter ?? 0,
-    supportRoleId: config.ticketConfig?.supportRoleId,
-    adminRoleId: config.ticketConfig?.adminRoleId,
   };
   saveGuildConfig(guild.id, config);
 
