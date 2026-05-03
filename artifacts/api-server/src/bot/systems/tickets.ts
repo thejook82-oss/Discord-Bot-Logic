@@ -355,11 +355,25 @@ export async function handleReasonModal(
     topic: `Ticket opened by ${interaction.user.tag} | Type: ${cfg.label}`,
   });
 
-  // Place ticket channel below the panel channel within the category
+  // Place ticket channel right below the panel channel within the category
   try {
-    const panelCh = await guild.channels.fetch(guildConfig.ticketConfig.setupChannelId ?? "").catch(() => null);
-    if (panelCh && "position" in panelCh) {
-      await ticketChannel.setPosition(panelCh.position + 1);
+    if (category) {
+      await guild.channels.fetch();
+      const siblings = [...guild.channels.cache.values()]
+        .filter(ch => ch.parentId === category.id)
+        .sort((a, b) => a.position - b.position);
+
+      const panelIdx = siblings.findIndex(
+        ch => ch.id === (guildConfig.ticketConfig?.setupChannelId ?? ""),
+      );
+      const insertAt = panelIdx >= 0 ? panelIdx + 1 : siblings.length - 1;
+
+      // Build new positions: ticket channel goes right after the panel channel
+      const withoutTicket = siblings.filter(ch => ch.id !== ticketChannel.id);
+      withoutTicket.splice(insertAt, 0, ticketChannel);
+      await guild.channels.setPositions(
+        withoutTicket.map((ch, i) => ({ channel: ch.id, position: i })),
+      );
     }
   } catch {
     // ignore positioning errors
