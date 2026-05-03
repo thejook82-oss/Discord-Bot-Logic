@@ -39,65 +39,36 @@ export async function sendTicketPanel(
   const guild = interaction.guild!;
   const config = getGuildConfig(guild.id);
 
-  let categoryId = config.ticketConfig?.categoryId;
-  let panelChannelId = config.ticketConfig?.setupChannelId;
+  const categoryId = config.ticketConfig?.categoryId ?? "";
+  const panelChannelId = config.ticketConfig?.setupChannelId ?? interaction.channelId;
 
-  // Create category if it doesn't exist
+  // Validate category exists
   if (!categoryId) {
-    const category = await guild.channels.create({
-      name: "🎫 Support",
-      type: ChannelType.GuildCategory,
-      permissionOverwrites: [
-        {
-          id: guild.roles.everyone.id,
-          deny: [PermissionFlagsBits.SendMessages],
-          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
-        },
-      ],
+    await interaction.editReply({
+      content: "❌ No category selected. Please run `/setup-tickets category:#YourCategory` to set it.",
     });
-    categoryId = category.id;
+    return;
   }
 
-  // Create or reuse the ticket panel channel inside the category
+  // Fetch the panel channel
   let panelChannel: TextChannel | null = null;
-
-  if (panelChannelId) {
-    try {
-      const existing = await guild.channels.fetch(panelChannelId);
-      if (existing?.isTextBased()) panelChannel = existing as TextChannel;
-    } catch {
-      panelChannel = null;
-    }
+  try {
+    const fetched = await guild.channels.fetch(panelChannelId);
+    if (fetched?.isTextBased()) panelChannel = fetched as TextChannel;
+  } catch {
+    panelChannel = null;
   }
 
   if (!panelChannel) {
-    panelChannel = await guild.channels.create({
-      name: "🎫・open-ticket",
-      type: ChannelType.GuildText,
-      parent: categoryId,
-      topic: "Open a support ticket here.",
-      permissionOverwrites: [
-        {
-          id: guild.roles.everyone.id,
-          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
-          deny: [PermissionFlagsBits.SendMessages],
-        },
-        {
-          id: guild.members.me!.id,
-          allow: [
-            PermissionFlagsBits.ViewChannel,
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.ReadMessageHistory,
-            PermissionFlagsBits.ManageMessages,
-          ],
-        },
-      ],
-    }) as TextChannel;
-    panelChannelId = panelChannel.id;
+    await interaction.editReply({
+      content: "❌ Could not find the panel channel. Please run `/setup-tickets panel-channel:#YourChannel` again.",
+    });
+    return;
   }
 
+  // Keep existing config, just update the channel IDs
   config.ticketConfig = {
-    setupChannelId: panelChannelId,
+    setupChannelId: panelChannel.id,
     categoryId,
     roles: config.ticketConfig?.roles ?? {},
     ticketCounter: config.ticketConfig?.ticketCounter ?? 0,
@@ -137,7 +108,7 @@ export async function sendTicketPanel(
   await panelChannel.send({ embeds: [embed], components: [openRow] });
 
   await interaction.editReply({
-    content: `✅ Ticket system is ready!\n📁 Category: **🎫 Support** has been created.\n🎫 Panel sent to <#${panelChannel.id}>`,
+    content: `✅ Ticket system is ready!\n📁 Tickets category: <#${categoryId}>\n🎫 Panel sent to <#${panelChannel.id}>`,
   });
 }
 
@@ -354,30 +325,6 @@ export async function handleReasonModal(
     permissionOverwrites,
     topic: `Ticket opened by ${interaction.user.tag} | Type: ${cfg.label}`,
   });
-
-  // Place ticket channel right below the panel channel within the category
-  try {
-    if (category) {
-      await guild.channels.fetch();
-      const siblings = [...guild.channels.cache.values()]
-        .filter(ch => ch.parentId === category.id)
-        .sort((a, b) => a.position - b.position);
-
-      const panelIdx = siblings.findIndex(
-        ch => ch.id === (guildConfig.ticketConfig?.setupChannelId ?? ""),
-      );
-      const insertAt = panelIdx >= 0 ? panelIdx + 1 : siblings.length - 1;
-
-      // Build new positions: ticket channel goes right after the panel channel
-      const withoutTicket = siblings.filter(ch => ch.id !== ticketChannel.id);
-      withoutTicket.splice(insertAt, 0, ticketChannel);
-      await guild.channels.setPositions(
-        withoutTicket.map((ch, i) => ({ channel: ch.id, position: i })),
-      );
-    }
-  } catch {
-    // ignore positioning errors
-  }
 
   // Build mention string
   const mentions: string[] = [];

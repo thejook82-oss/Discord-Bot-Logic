@@ -1,19 +1,7 @@
 {
   "guilds": {
     "1451263550948376608": {
-      "tickets": {
-        "1500327000097951814": {
-          "userId": "1456788629912293608",
-          "type": "event",
-          "typeName": "Event Ticket",
-          "number": 17,
-          "claimed": false,
-          "claimedBy": null,
-          "closed": false,
-          "reason": "سلام عليكم",
-          "createdAt": "2026-05-03T02:43:51.979Z"
-        }
-      },
+      "tickets": {},
       "ticketConfig": {
         "setupChannelId": "1452754994032934953",
         "categoryId": "1500310821581099110",
