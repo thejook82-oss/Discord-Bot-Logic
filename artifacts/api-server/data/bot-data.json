@@ -1,11 +1,26 @@
 {
   "guilds": {
     "1451263550948376608": {
-      "tickets": {},
+      "tickets": {
+        "1500314060619517952": {
+          "userId": "1456788629912293608",
+          "type": "support",
+          "typeName": "Support Ticket",
+          "number": 2,
+          "claimed": false,
+          "claimedBy": null,
+          "closed": false,
+          "reason": "سلام عليكم",
+          "createdAt": "2026-05-03T01:52:27.404Z"
+        }
+      },
       "ticketConfig": {
         "setupChannelId": "1452754994032934953",
         "categoryId": "1500310821581099110",
-        "ticketCounter": 1
+        "ticketCounter": 2
+      },
+      "logConfig": {
+        "channelId": "1500314747734589450"
       }
     }
   }

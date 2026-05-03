@@ -9,6 +9,7 @@ import { handleReady } from "./events/ready.js";
 import { handleInteractionCreate } from "./events/interaction-create.js";
 import { registerMemberEvents } from "./events/member-events.js";
 import { registerMessageEvents } from "./events/message-events.js";
+import { registerChannelEvents } from "./events/channel-events.js";
 
 export function startBot(): void {
   const token = process.env["DISCORD_TOKEN"];
@@ -42,6 +43,7 @@ export function startBot(): void {
 
   registerMemberEvents(client);
   registerMessageEvents(client);
+  registerChannelEvents(client);
 
   client.on("error", (err) => {
     logger.error({ err }, "Discord client error");
