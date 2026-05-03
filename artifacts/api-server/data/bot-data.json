@@ -1,19 +1,7 @@
 {
   "guilds": {
     "1451263550948376608": {
-      "tickets": {
-        "1500323304416874671": {
-          "userId": "1456788629912293608",
-          "type": "report",
-          "typeName": "Report Ticket",
-          "number": 12,
-          "claimed": false,
-          "claimedBy": null,
-          "closed": false,
-          "reason": "سلام عليكم",
-          "createdAt": "2026-05-03T02:29:10.689Z"
-        }
-      },
+      "tickets": {},
       "ticketConfig": {
         "setupChannelId": "1452754994032934953",
         "categoryId": "1500310821581099110",
@@ -23,7 +11,7 @@
           "division": "1500313124019109908",
           "admin": "1474442320207417525"
         },
-        "ticketCounter": 12
+        "ticketCounter": 15
       },
       "logConfig": {
         "channelId": "1500314747734589450"
