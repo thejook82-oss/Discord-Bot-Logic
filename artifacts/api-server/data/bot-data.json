@@ -2,16 +2,16 @@
   "guilds": {
     "1451263550948376608": {
       "tickets": {
-        "1500326056069042286": {
+        "1500327000097951814": {
           "userId": "1456788629912293608",
           "type": "event",
           "typeName": "Event Ticket",
-          "number": 16,
+          "number": 17,
           "claimed": false,
           "claimedBy": null,
           "closed": false,
           "reason": "سلام عليكم",
-          "createdAt": "2026-05-03T02:40:07.112Z"
+          "createdAt": "2026-05-03T02:43:51.979Z"
         }
       },
       "ticketConfig": {
@@ -23,7 +23,7 @@
           "division": "1500313124019109908",
           "admin": "1474442320207417525"
         },
-        "ticketCounter": 16
+        "ticketCounter": 17
       },
       "logConfig": {
         "channelId": "1500314747734589450"
