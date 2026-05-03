@@ -19,6 +19,10 @@ export async function handleReady(client: Client): Promise<void> {
   const rest = new REST().setToken(token);
 
   try {
+    // Clear global commands to avoid duplicates
+    await rest.put(Routes.applicationCommands(client.user.id), { body: [] });
+
+    // Register guild-specific commands (instant update)
     logger.info("Registering slash commands per guild...");
     const guilds = client.guilds.cache;
     for (const [guildId] of guilds) {
