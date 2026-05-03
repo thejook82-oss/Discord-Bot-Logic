@@ -34,27 +34,76 @@ import {
 export async function sendTicketPanel(
   interaction: ChatInputCommandInteraction,
 ): Promise<void> {
+  await interaction.deferReply({ ephemeral: true });
+
   const guild = interaction.guild!;
   const config = getGuildConfig(guild.id);
 
   let categoryId = config.ticketConfig?.categoryId;
+  let panelChannelId = config.ticketConfig?.setupChannelId;
 
+  // Create category if it doesn't exist
   if (!categoryId) {
     const category = await guild.channels.create({
-      name: "📋 Support",
+      name: "🎫 Support",
       type: ChannelType.GuildCategory,
+      permissionOverwrites: [
+        {
+          id: guild.roles.everyone.id,
+          deny: [PermissionFlagsBits.SendMessages],
+          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
+        },
+      ],
     });
     categoryId = category.id;
-    config.ticketConfig = {
-      setupChannelId: interaction.channelId,
-      categoryId,
-      ticketCounter: config.ticketConfig?.ticketCounter ?? 0,
-    };
-    saveGuildConfig(guild.id, config);
-  } else {
-    config.ticketConfig!.setupChannelId = interaction.channelId;
-    saveGuildConfig(guild.id, config);
   }
+
+  // Create or reuse the ticket panel channel inside the category
+  let panelChannel: TextChannel | null = null;
+
+  if (panelChannelId) {
+    try {
+      const existing = await guild.channels.fetch(panelChannelId);
+      if (existing?.isTextBased()) panelChannel = existing as TextChannel;
+    } catch {
+      panelChannel = null;
+    }
+  }
+
+  if (!panelChannel) {
+    panelChannel = await guild.channels.create({
+      name: "🎫・open-ticket",
+      type: ChannelType.GuildText,
+      parent: categoryId,
+      topic: "Open a support ticket here.",
+      permissionOverwrites: [
+        {
+          id: guild.roles.everyone.id,
+          allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory],
+          deny: [PermissionFlagsBits.SendMessages],
+        },
+        {
+          id: guild.members.me!.id,
+          allow: [
+            PermissionFlagsBits.ViewChannel,
+            PermissionFlagsBits.SendMessages,
+            PermissionFlagsBits.ReadMessageHistory,
+            PermissionFlagsBits.ManageMessages,
+          ],
+        },
+      ],
+    }) as TextChannel;
+    panelChannelId = panelChannel.id;
+  }
+
+  config.ticketConfig = {
+    setupChannelId: panelChannelId,
+    categoryId,
+    ticketCounter: config.ticketConfig?.ticketCounter ?? 0,
+    supportRoleId: config.ticketConfig?.supportRoleId,
+    adminRoleId: config.ticketConfig?.adminRoleId,
+  };
+  saveGuildConfig(guild.id, config);
 
   const iconURL = guild.iconURL({ size: 512 }) ?? undefined;
 
@@ -86,7 +135,11 @@ export async function sendTicketPanel(
       .setStyle(ButtonStyle.Secondary),
   );
 
-  await interaction.reply({ embeds: [embed], components: [openRow] });
+  await panelChannel.send({ embeds: [embed], components: [openRow] });
+
+  await interaction.editReply({
+    content: `✅ Ticket system is ready!\n📁 Category: **🎫 Support** has been created.\n🎫 Panel sent to <#${panelChannel.id}>`,
+  });
 }
 
 export async function handleOpenButton(
@@ -301,6 +354,9 @@ export async function handleReasonModal(
   const mentionRoles: string[] = [];
   if (guildConfig.ticketConfig.supportRoleId) {
     mentionRoles.push(`<@&${guildConfig.ticketConfig.supportRoleId}>`);
+  }
+  if (guildConfig.ticketConfig.staffRoleId) {
+    mentionRoles.push(`<@&${guildConfig.ticketConfig.staffRoleId}>`);
   }
   if (guildConfig.ticketConfig.adminRoleId && type === "administrator") {
     mentionRoles.push(`<@&${guildConfig.ticketConfig.adminRoleId}>`);

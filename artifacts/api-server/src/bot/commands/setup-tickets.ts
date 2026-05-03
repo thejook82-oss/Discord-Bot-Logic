@@ -13,13 +13,19 @@ export const data = new SlashCommandBuilder()
   .addRoleOption((opt) =>
     opt
       .setName("support-role")
-      .setDescription("Role that can see and respond to tickets.")
+      .setDescription("Support role — mentioned in all tickets.")
+      .setRequired(false),
+  )
+  .addRoleOption((opt) =>
+    opt
+      .setName("staff-role")
+      .setDescription("Staff role — mentioned in all tickets alongside support.")
       .setRequired(false),
   )
   .addRoleOption((opt) =>
     opt
       .setName("admin-role")
-      .setDescription("Admin role for administrator tickets.")
+      .setDescription("Admin role — mentioned in Administrator tickets.")
       .setRequired(false),
   );
 
@@ -27,6 +33,7 @@ export async function execute(
   interaction: ChatInputCommandInteraction,
 ): Promise<void> {
   const supportRole = interaction.options.getRole("support-role");
+  const staffRole = interaction.options.getRole("staff-role");
   const adminRole = interaction.options.getRole("admin-role");
 
   const config = getGuildConfig(interaction.guildId!);
@@ -38,6 +45,7 @@ export async function execute(
     };
   }
   if (supportRole) config.ticketConfig.supportRoleId = supportRole.id;
+  if (staffRole) config.ticketConfig.staffRoleId = staffRole.id;
   if (adminRole) config.ticketConfig.adminRoleId = adminRole.id;
   saveGuildConfig(interaction.guildId!, config);
 

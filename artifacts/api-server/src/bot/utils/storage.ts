@@ -21,6 +21,7 @@ export interface GuildConfig {
     setupChannelId: string;
     categoryId: string;
     supportRoleId?: string;
+    staffRoleId?: string;
     adminRoleId?: string;
     ticketCounter: number;
   };
