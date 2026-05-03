@@ -3,15 +3,15 @@
     "1451263550948376608": {
       "tickets": {},
       "ticketConfig": {
-        "setupChannelId": "1452754994032934953",
-        "categoryId": "1500310821581099110",
+        "setupChannelId": "1453191542712963132",
+        "categoryId": "1453184739719512109",
         "roles": {
           "staff": "1500310632598208543",
           "event": "1500313050731909261",
           "division": "1500313124019109908",
           "admin": "1474442320207417525"
         },
-        "ticketCounter": 17
+        "ticketCounter": 19
       },
       "logConfig": {
         "channelId": "1500314747734589450"
