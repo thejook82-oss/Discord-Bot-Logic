@@ -2,23 +2,28 @@
   "guilds": {
     "1451263550948376608": {
       "tickets": {
-        "1500317260940579007": {
+        "1500323304416874671": {
           "userId": "1456788629912293608",
-          "type": "division",
-          "typeName": "Division Ticket",
-          "number": 5,
+          "type": "report",
+          "typeName": "Report Ticket",
+          "number": 12,
           "claimed": false,
           "claimedBy": null,
           "closed": false,
-          "reason": "slam 3likom",
-          "createdAt": "2026-05-03T02:05:09.877Z"
+          "reason": "سلام عليكم",
+          "createdAt": "2026-05-03T02:29:10.689Z"
         }
       },
       "ticketConfig": {
         "setupChannelId": "1452754994032934953",
         "categoryId": "1500310821581099110",
-        "roles": {},
-        "ticketCounter": 5
+        "roles": {
+          "staff": "1500310632598208543",
+          "event": "1500313050731909261",
+          "division": "1500313124019109908",
+          "admin": "1474442320207417525"
+        },
+        "ticketCounter": 12
       },
       "logConfig": {
         "channelId": "1500314747734589450"

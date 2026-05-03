@@ -299,11 +299,11 @@ export async function handleReasonModal(
   // report   → @Staff can see + owner, mention @Staff only
   // administrator → @Admin can see + owner, mention @Admin only
   const typeRoleMap: Record<string, { roleId?: string; mentionOwner: boolean; mentionRole: boolean }> = {
-    support:       { roleId: roles.staff,    mentionOwner: true,  mentionRole: true  },
-    event:         { roleId: roles.event,    mentionOwner: false, mentionRole: true  },
-    division:      { roleId: roles.division, mentionOwner: true,  mentionRole: true  },
-    report:        { roleId: roles.staff,    mentionOwner: false, mentionRole: true  },
-    administrator: { roleId: roles.admin,    mentionOwner: false, mentionRole: true  },
+    support:       { roleId: roles.staff,    mentionOwner: true, mentionRole: true },
+    event:         { roleId: roles.event,    mentionOwner: true, mentionRole: true },
+    division:      { roleId: roles.division, mentionOwner: true, mentionRole: true },
+    report:        { roleId: roles.staff,    mentionOwner: true, mentionRole: true },
+    administrator: { roleId: roles.admin,    mentionOwner: true, mentionRole: true },
   };
 
   const typeRole = typeRoleMap[type] ?? { mentionOwner: true, mentionRole: false };
