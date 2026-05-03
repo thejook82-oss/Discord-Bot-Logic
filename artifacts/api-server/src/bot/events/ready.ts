@@ -19,11 +19,15 @@ export async function handleReady(client: Client): Promise<void> {
   const rest = new REST().setToken(token);
 
   try {
-    logger.info("Registering slash commands...");
-    await rest.put(Routes.applicationCommands(client.user.id), {
-      body: commands,
-    });
-    logger.info(`Registered ${commands.length} slash commands globally.`);
+    logger.info("Registering slash commands per guild...");
+    const guilds = client.guilds.cache;
+    for (const [guildId] of guilds) {
+      await rest.put(
+        Routes.applicationGuildCommands(client.user.id, guildId),
+        { body: commands },
+      );
+      logger.info(`Registered ${commands.length} slash commands in guild ${guildId}.`);
+    }
   } catch (err) {
     logger.error({ err }, "Failed to register slash commands");
   }
