@@ -24,12 +24,13 @@ export function startBot(): void {
       GatewayIntentBits.Guilds,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.GuildModeration,
-      // GatewayIntentBits.MessageContent, // Enable in Dev Portal first
-      // GatewayIntentBits.GuildMembers,   // Enable in Dev Portal first
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildMembers,
     ],
     partials: [
       Partials.Message,
       Partials.Channel,
+      Partials.GuildMember,
     ],
   });
 
