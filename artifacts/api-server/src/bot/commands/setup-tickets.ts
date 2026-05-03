@@ -12,28 +12,35 @@ export const data = new SlashCommandBuilder()
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addRoleOption((opt) =>
     opt
-      .setName("support-role")
-      .setDescription("Support role — mentioned in all tickets.")
+      .setName("staff-role")
+      .setDescription("Staff role — for Support & Report tickets.")
       .setRequired(false),
   )
   .addRoleOption((opt) =>
     opt
-      .setName("staff-role")
-      .setDescription("Staff role — mentioned in all tickets alongside support.")
+      .setName("event-role")
+      .setDescription("Event role — for Event tickets.")
+      .setRequired(false),
+  )
+  .addRoleOption((opt) =>
+    opt
+      .setName("division-role")
+      .setDescription("Division role — for Division tickets.")
       .setRequired(false),
   )
   .addRoleOption((opt) =>
     opt
       .setName("admin-role")
-      .setDescription("Admin role — mentioned in Administrator tickets.")
+      .setDescription("Admin role — for Administrator tickets.")
       .setRequired(false),
   );
 
 export async function execute(
   interaction: ChatInputCommandInteraction,
 ): Promise<void> {
-  const supportRole = interaction.options.getRole("support-role");
   const staffRole = interaction.options.getRole("staff-role");
+  const eventRole = interaction.options.getRole("event-role");
+  const divisionRole = interaction.options.getRole("division-role");
   const adminRole = interaction.options.getRole("admin-role");
 
   const config = getGuildConfig(interaction.guildId!);
@@ -41,12 +48,15 @@ export async function execute(
     config.ticketConfig = {
       setupChannelId: interaction.channelId,
       categoryId: "",
+      roles: {},
       ticketCounter: 0,
     };
   }
-  if (supportRole) config.ticketConfig.supportRoleId = supportRole.id;
-  if (staffRole) config.ticketConfig.staffRoleId = staffRole.id;
-  if (adminRole) config.ticketConfig.adminRoleId = adminRole.id;
+  if (!config.ticketConfig.roles) config.ticketConfig.roles = {};
+  if (staffRole) config.ticketConfig.roles.staff = staffRole.id;
+  if (eventRole) config.ticketConfig.roles.event = eventRole.id;
+  if (divisionRole) config.ticketConfig.roles.division = divisionRole.id;
+  if (adminRole) config.ticketConfig.roles.admin = adminRole.id;
   saveGuildConfig(interaction.guildId!, config);
 
   await sendTicketPanel(interaction);

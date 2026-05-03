@@ -20,9 +20,12 @@ export interface GuildConfig {
   ticketConfig?: {
     setupChannelId: string;
     categoryId: string;
-    supportRoleId?: string;
-    staffRoleId?: string;
-    adminRoleId?: string;
+    roles: {
+      staff?: string;      // Support + Report tickets
+      event?: string;      // Event tickets
+      division?: string;   // Division tickets
+      admin?: string;      // Administrator tickets
+    };
     ticketCounter: number;
   };
   logConfig?: {

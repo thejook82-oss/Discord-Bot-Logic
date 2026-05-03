@@ -291,6 +291,32 @@ export async function handleReasonModal(
     //
   }
 
+  const roles = guildConfig.ticketConfig.roles ?? {};
+
+  // Determine which role gets access + mention per ticket type
+  // support  → @Staff can see + owner, mention @Staff + owner
+  // event    → @Event can see + owner, mention @Event only
+  // division → @Clan Division can see + owner, mention @Clan Division + owner
+  // report   → @Staff can see + owner, mention @Staff only
+  // administrator → @Admin can see + owner, mention @Admin only
+  const typeRoleMap: Record<string, { roleId?: string; mentionOwner: boolean; mentionRole: boolean }> = {
+    support:       { roleId: roles.staff,    mentionOwner: true,  mentionRole: true  },
+    event:         { roleId: roles.event,    mentionOwner: false, mentionRole: true  },
+    division:      { roleId: roles.division, mentionOwner: true,  mentionRole: true  },
+    report:        { roleId: roles.staff,    mentionOwner: false, mentionRole: true  },
+    administrator: { roleId: roles.admin,    mentionOwner: false, mentionRole: true  },
+  };
+
+  const typeRole = typeRoleMap[type] ?? { mentionOwner: true, mentionRole: false };
+
+  const staffPerms = [
+    PermissionFlagsBits.ViewChannel,
+    PermissionFlagsBits.SendMessages,
+    PermissionFlagsBits.ReadMessageHistory,
+    PermissionFlagsBits.ManageMessages,
+    PermissionFlagsBits.AttachFiles,
+  ];
+
   const permissionOverwrites = [
     {
       id: guild.roles.everyone.id,
@@ -317,30 +343,9 @@ export async function handleReasonModal(
     },
   ];
 
-  if (guildConfig.ticketConfig.supportRoleId) {
-    permissionOverwrites.push({
-      id: guildConfig.ticketConfig.supportRoleId,
-      allow: [
-        PermissionFlagsBits.ViewChannel,
-        PermissionFlagsBits.SendMessages,
-        PermissionFlagsBits.ReadMessageHistory,
-        PermissionFlagsBits.ManageMessages,
-        PermissionFlagsBits.AttachFiles,
-      ],
-    });
-  }
-
-  if (guildConfig.ticketConfig.adminRoleId) {
-    permissionOverwrites.push({
-      id: guildConfig.ticketConfig.adminRoleId,
-      allow: [
-        PermissionFlagsBits.ViewChannel,
-        PermissionFlagsBits.SendMessages,
-        PermissionFlagsBits.ReadMessageHistory,
-        PermissionFlagsBits.ManageMessages,
-        PermissionFlagsBits.AttachFiles,
-      ],
-    });
+  // Only the specific role for this ticket type can see it
+  if (typeRole.roleId) {
+    permissionOverwrites.push({ id: typeRole.roleId, allow: staffPerms });
   }
 
   const ticketChannel = await guild.channels.create({
@@ -351,15 +356,13 @@ export async function handleReasonModal(
     topic: `Ticket opened by ${interaction.user.tag} | Type: ${cfg.label}`,
   });
 
-  const mentionRoles: string[] = [];
-  if (guildConfig.ticketConfig.supportRoleId) {
-    mentionRoles.push(`<@&${guildConfig.ticketConfig.supportRoleId}>`);
+  // Build mention string
+  const mentions: string[] = [];
+  if (typeRole.mentionRole && typeRole.roleId) {
+    mentions.push(`<@&${typeRole.roleId}>`);
   }
-  if (guildConfig.ticketConfig.staffRoleId) {
-    mentionRoles.push(`<@&${guildConfig.ticketConfig.staffRoleId}>`);
-  }
-  if (guildConfig.ticketConfig.adminRoleId && type === "administrator") {
-    mentionRoles.push(`<@&${guildConfig.ticketConfig.adminRoleId}>`);
+  if (typeRole.mentionOwner) {
+    mentions.push(`<@${interaction.user.id}>`);
   }
 
   const ticketEmbed = new EmbedBuilder()
@@ -398,11 +401,8 @@ export async function handleReasonModal(
       .setStyle(ButtonStyle.Secondary),
   );
 
-  const pingMsg =
-    mentionRoles.length > 0 ? mentionRoles.join(" ") : undefined;
-
   await ticketChannel.send({
-    content: pingMsg ?? `<@${interaction.user.id}>`,
+    content: mentions.length > 0 ? mentions.join(" ") : `<@${interaction.user.id}>`,
     embeds: [ticketEmbed],
     components: [buttonRow],
   });
