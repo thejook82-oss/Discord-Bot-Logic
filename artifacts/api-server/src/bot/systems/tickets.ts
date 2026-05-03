@@ -355,6 +355,16 @@ export async function handleReasonModal(
     topic: `Ticket opened by ${interaction.user.tag} | Type: ${cfg.label}`,
   });
 
+  // Place ticket channel below the panel channel within the category
+  try {
+    const panelCh = await guild.channels.fetch(guildConfig.ticketConfig.setupChannelId ?? "").catch(() => null);
+    if (panelCh && "position" in panelCh) {
+      await ticketChannel.setPosition(panelCh.position + 1);
+    }
+  } catch {
+    // ignore positioning errors
+  }
+
   // Build mention string
   const mentions: string[] = [];
   if (typeRole.mentionRole && typeRole.roleId) {
