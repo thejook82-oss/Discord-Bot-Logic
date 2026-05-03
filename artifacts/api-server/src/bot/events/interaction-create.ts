@@ -3,6 +3,7 @@ import { logger } from "../../lib/logger.js";
 import { execute as executeSetupTickets } from "../commands/setup-tickets.js";
 import { execute as executeSetupLogs } from "../commands/setup-logs.js";
 import { execute as executeTicket } from "../commands/ticket.js";
+import { execute as executeClear } from "../commands/clear.js";
 import {
   handleOpenButton,
   handleInfoButton,
@@ -26,6 +27,7 @@ const commandHandlers: Record<
   "setup-tickets": executeSetupTickets,
   "setup-logs": executeSetupLogs,
   ticket: executeTicket,
+  clear: executeClear,
 };
 
 export async function handleInteractionCreate(

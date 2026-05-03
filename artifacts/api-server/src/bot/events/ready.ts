@@ -7,8 +7,9 @@ import { logger } from "../../lib/logger.js";
 import { data as setupTickets } from "../commands/setup-tickets.js";
 import { data as setupLogs } from "../commands/setup-logs.js";
 import { data as ticket } from "../commands/ticket.js";
+import { data as clear } from "../commands/clear.js";
 
-const commands = [setupTickets, setupLogs, ticket].map((c) => c.toJSON());
+const commands = [setupTickets, setupLogs, ticket, clear].map((c) => c.toJSON());
 
 export async function handleReady(client: Client): Promise<void> {
   logger.info(`Bot logged in as ${client.user?.tag}`);
